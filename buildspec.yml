@@ -1,29 +1,22 @@
 version: 0.2
 
-
 phases:
+  install:
+    runtime-versions:
+      nodejs: 14
   pre_build:
     commands:
       - echo Logging in to Amazon ECR...
-      - aws --version
-      - $(aws ecr get-login --region $AWS_DEFAULT_REGION --no-include-email)
-      - REPOSITORY_URI=575279257907.dkr.ecr.us-east-2.amazonaws.com/public_repo
-      - COMMIT_HASH=$(echo $CODEBUILD_RESOLVED_SOURCE_VERSION | cut -c 1-7)
-      - IMAGE_TAG=build-$(echo $CODEBUILD_BUILD_ID | awk -F":" '{print $2}')
+      - aws ecr get-login-password --region us-east-2 | docker login --username AWS --password-stdin 575279257907.dkr.ecr.us-east-2.amazonaws.com/public_repo
   build:
     commands:
-      - echo Build started on `date`
       - echo Building the Docker image...
-      - docker build -t $REPOSITORY_URI:latest .
-      - docker tag $REPOSITORY_URI:latest $REPOSITORY_URI:$IMAGE_TAG
+      - docker build -t 575279257907.dkr.ecr.us-east-2.amazonaws.com/public_repo:latest .
   post_build:
     commands:
+      - echo Pushing the Docker image to ECR...
+      - docker push 575279257907.dkr.ecr.us-east-2.amazonaws.com/public_repo:latest
       - echo Build completed on `date`
-      - echo Pushing the Docker images...
-      - docker push $REPOSITORY_URI:latest
-      - docker push $REPOSITORY_URI:$IMAGE_TAG
-      - echo Writing image definitions file...
-      - printf '[{"name":"public_repo","imageUri":"%s"}]' $REPOSITORY_URI:$IMAGE_TAG > imagedefinitions.json
-      - cat imagedefinitions.json 
 artifacts:
-    files: imagedefinitions.json
+  files:
+    - imagedefinitions.json
