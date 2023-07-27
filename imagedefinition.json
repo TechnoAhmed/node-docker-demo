@@ -1,6 +1,6 @@
 [
   {
-    "name": "node-app",
-    "imageUri": "123456789012.dkr.ecr.us-east-1.amazonaws.com/my-node-app-repo:latest"
+    "name": "public-repo",
+    "imageUri": "123456789012.dkr.ecr.us-east-1.amazonaws.com/public-repo:latest"
   }
 ]
