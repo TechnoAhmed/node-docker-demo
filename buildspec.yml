@@ -7,7 +7,7 @@ phases:
     - aws ecr get-login-password --region us-east-2 | docker login --username AWS --password-stdin 575279257907.dkr.ecr.us-east-2.amazonaws.com
     - COMMIT_HASH=$(echo $CODEBUILD_RESOLVED_SOURCE_VERSION | cut -c 1-7)
     - IMAGE_TAG=${COMMIT_HASH:=latest}
-    - APPLICATION_NAME=node-docker-demo
+    - APPLICATION_NAME=node-app
     - REPOSITORY_URI=575279257907.dkr.ecr.us-east-2.amazonaws.com/public_repo
   build: 
     commands: 
@@ -21,7 +21,7 @@ phases:
     - echo pushing to repo
     - docker push $REPOSITORY_URI:$IMAGE_TAG
     - echo Writing image definitions file... 
-    - printf '[{"name":"node-docker-demo", "imageUri":"%s"}]' $REPOSITORY_URI:$IMAGE_TAG > imagedefinitions.json
+    - printf '[{"name":"node-app", "imageUri":"%s"}]' $REPOSITORY_URI:$IMAGE_TAG > imagedefinitions.json
 artifacts:
   files:
     - imagedefinitions.json
